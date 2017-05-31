@@ -59,6 +59,7 @@ class ApplicationController < ActionController::Base
   include_concern 'SysprepAnswerFile'
   include_concern 'ReportDownloads'
 
+  before_action :zzz_whitelist_action
   before_action :reset_toolbar
   before_action :set_session_tenant
   before_action :get_global_session_data, :except => [:resize_layout, :authenticate]
@@ -66,6 +67,21 @@ class ApplicationController < ActionController::Base
   before_action :set_gettext_locale
   before_action :allow_websocket
   after_action :set_global_session_data, :except => [:resize_layout]
+
+  def zzz_whitelist
+    @zzz_whitelist ||= begin
+      controller_routes = YAML.load_file(ManageIQ::UI::Classic::Engine.root.join("config/controller_routes.yml"))
+      controller_routes.delete("__grouped_routes__") # Delete placeholder entry for grouping
+      controller_routes
+    end
+  end
+
+  def zzz_whitelist_action
+    method = request.method.downcase
+    Rails.logger.info("checking whitelist for method: #{method} and #{action_name} for #{controller_name}")
+    allowed = zzz_whitelist.fetch_path(controller_name, method).include?(action_name)
+    raise ActionController::RoutingError, "action #{action_name.inspect} not found" unless allowed
+  end
 
   def local_request?
     Rails.env.development? || Rails.env.test?

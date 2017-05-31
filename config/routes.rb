@@ -3287,14 +3287,20 @@ Rails.application.routes.draw do
 
   # TODO: the root needs to be defined in the main app for now
   # root :to => 'dashboard#login'
+  # pure-angular templates
+  get '/static/*id' => 'static#show', :format => false
 
   get '/saml_login(/*path)' => 'dashboard#saml_login'
-
   controller_routes.each do |controller_name, controller_actions|
     # Default route with no action to controller's index action
-    unless [
-      :ems_cloud, :ems_infra, :ems_physical_infra, :ems_container, :ems_middleware, :ems_datawarehouse, :ems_network
-    ].include?(controller_name)
+    unless %i(ems_cloud ems_infra ems_physical_infra ems_container ems_middleware ems_datawarehouse ems_network).include?(controller_name)
+      get(
+        "#{controller_name}(/:id)",
+        :controller => controller_name,
+        :action     => :index,
+        :id         => /\d+(r\d+)?/,
+        :as         => controller_name
+      )
       match controller_name.to_s, :controller => controller_name, :action => :index, :via => :get
     end
 
@@ -3304,28 +3310,20 @@ Rails.application.routes.draw do
           :controller => controller_name
     end
 
-    # One-by-one get/post routes for defined controllers
-    if controller_actions.kind_of?(Hash)
-      unless controller_actions[:get].nil?
-        controller_actions[:get].each do |action_name|
-          get "#{controller_name}/#{action_name}(/:id)",
-              :action     => action_name,
-              :controller => controller_name
-        end
-      end
+    if controller_actions[:get]
+      get(
+        "#{controller_name}/:action(/:id)",
+        :controller => controller_name
+      )
+    end
 
-      unless controller_actions[:post].nil?
-        controller_actions[:post].each do |action_name|
-          post "#{controller_name}/#{action_name}(/:id)",
-               :action     => action_name,
-               :controller => controller_name
-        end
-      end
+    if controller_actions[:post]
+      post(
+        "#{controller_name}/:action(/:id)",
+        :controller => controller_name
+      )
     end
   end
-
-  # pure-angular templates
-  get '/static/*id' => 'static#show', :format => false
 
   resources :ems_cloud,          :as => :ems_clouds
   resources :ems_infra,          :as => :ems_infras

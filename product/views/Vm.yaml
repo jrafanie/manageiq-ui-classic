@@ -21,7 +21,6 @@ db: Vm
 cols:
 - name
 - ipaddresses
-- last_compliance_status
 - v_total_snapshots
 - allocated_disk_storage
 - last_scan_on
@@ -33,7 +32,6 @@ include:
 # Included tables and columns for query performance
 include_for_find:
   :snapshots: {}
-  :compliances: {}
   :operating_system: {}
   :hardware: {}
   :tags: {}
@@ -42,7 +40,6 @@ include_for_find:
 col_order:
 - name
 - ipaddresses
-- last_compliance_status
 - v_total_snapshots
 - allocated_disk_storage
 - last_scan_on
@@ -52,7 +49,6 @@ col_order:
 headers:
 - Name
 - IP Addresses
-- Compliant
 - Total Snapshots
 - Allocated Size
 - Last Analysis Time

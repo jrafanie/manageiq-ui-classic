@@ -20,7 +20,6 @@ db: MiqTemplate
 # Columns to fetch from the main table
 cols:
 - name
-- last_compliance_status
 - v_total_snapshots
 - allocated_disk_storage
 - last_scan_on
@@ -33,7 +32,6 @@ include:
 # Included tables and columns for query performance
 include_for_find:
   :snapshots: {}
-  :compliances: {}
   :operating_system: {}
   :hardware: {}
   :tags: {}
@@ -41,7 +39,6 @@ include_for_find:
 # Order of columns (from all tables)
 col_order:
 - name
-- last_compliance_status
 - v_total_snapshots
 - allocated_disk_storage
 - last_scan_on
@@ -50,7 +47,6 @@ col_order:
 # Column titles, in order
 headers:
 - Name
-- Compliant
 - Total Snapshots
 - Allocated Size
 - Last Analysis Time

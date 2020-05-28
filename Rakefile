@@ -50,6 +50,12 @@ namespace :spec do
   desc "Try to compile assets"
   task :compile => ["app:assets:precompile"]
 
+  desc "Run all integration tests"
+  task :integration do
+    system('yarn cypress:run --config video=false')
+    exit $CHILD_STATUS.exitstatus
+  end
+
   desc "Run Jest tests"
   task :jest do
     system('NODE_OPTIONS=--max_old_space_size=4096 yarn test')

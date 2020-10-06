@@ -10,8 +10,12 @@ cache:
   yarn: true
   timeout: 600
 addons:
-  postgresql: '10'
   chrome: beta
+  postgresql: '12'
+  apt:
+    packages:
+    - postgresql-12
+    - postgresql-client-12
 env:
   matrix:
   - TEST_SUITE=spec
@@ -33,7 +37,13 @@ matrix:
   - rvm: 2.5.7
     env: TEST_SUITE=spec:debride
 bundler_args: "--no-deployment"
-before_install: source tools/ci/before_install.sh
+before_install:
+  - source tools/ci/before_install.sh
+# setting up postgres 12 is quite a pain, see:
+# https://travis-ci.community/t/test-against-postgres-12/6768/8
+  - sudo cp /etc/postgresql/10/main/pg_hba.conf /etc/postgresql/12/main/pg_hba.conf
+  - sudo sed -i 's/port = 5433/port = 5432/' /etc/postgresql/12/main/postgresql.conf
+  - sudo pg_ctlcluster 12 main restart
 install: bin/setup
 before_script: source tools/ci/before_script.sh
 script: bundle exec rake $TEST_SUITE

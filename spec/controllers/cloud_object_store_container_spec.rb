@@ -1,4 +1,17 @@
 describe CloudObjectStoreContainerController do
+  let!(:user) do stub_user(:features => %w[
+    cloud_object_store_container cloud_object_store_container_admin
+    cloud_object_store_container_clear cloud_object_store_container_control
+    cloud_object_store_container_delete cloud_object_store_container_new
+    cloud_object_store_container_show cloud_object_store_container_show_list
+    cloud_object_store_container_tag cloudobject_store_container_view
+    cloud_object_store_object cloud_object_store_object_admin
+    cloud_object_store_object_control cloud_object_store_object_delete
+    cloud_object_store_object_show cloud_object_store_object_show_list
+    cloud_object_store_object_tag cloud_object_store_object_view
+    ])
+  end
+
   before do
     EvmSpecHelper.create_guid_miq_server_zone
     @container = FactoryBot.create(:cloud_object_store_container, :name => "cloud-object-store-container-01")
@@ -6,7 +19,6 @@ describe CloudObjectStoreContainerController do
   end
 
   describe "#tags_edit" do
-    let!(:user) { stub_user(:features => :all) }
     before do
       allow(@container).to receive(:tagged_with).with(:cat => user.userid).and_return("my tags")
       classification = FactoryBot.create(:classification)
@@ -207,5 +219,5 @@ describe CloudObjectStoreContainerController do
     end
   end
 
-  # include_examples '#download_summary_pdf', :cloud_object_store_container
+  include_examples '#download_summary_pdf', :cloud_object_store_container
 end

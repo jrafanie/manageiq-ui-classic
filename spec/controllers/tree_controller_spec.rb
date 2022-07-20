@@ -7,7 +7,7 @@ describe TreeController do
         get endpoint
 
         expect(response.status).to eq(200)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
 
@@ -18,7 +18,7 @@ describe TreeController do
         get endpoint, :params => {:id => node_id}
 
         expect(response.status).to eq(200)
-        expect(response.content_type).to eq('application/json')
+        expect(response.content_type).to include('application/json')
       end
     end
   end

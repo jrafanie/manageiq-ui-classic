@@ -177,6 +177,10 @@ class CloudNetworkController < ApplicationController
 
   private
 
+  def record_class
+    params[:pressed] && params[:pressed].starts_with?("cloud_network") ? CloudNetwork : VmOrTemplate
+  end
+
   def textual_group_list
     [%i[properties relationships], %i[tags]]
   end

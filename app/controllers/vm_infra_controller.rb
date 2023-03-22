@@ -21,6 +21,10 @@ class VmInfraController < ApplicationController
 
   private
 
+  def record_class
+    VmOrTemplate
+  end
+
   def features
     [
       {

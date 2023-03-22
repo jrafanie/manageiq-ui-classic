@@ -50,6 +50,10 @@ class FlavorController < ApplicationController
 
   private
 
+  def record_class
+    params[:display] == 'instances' ? VmOrTemplate : ManageIQ::Providers::CloudManager::Flavor
+  end
+
   def textual_group_list
     [%i[properties relationships], %i[tags]]
   end

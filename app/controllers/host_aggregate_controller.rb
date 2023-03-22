@@ -275,6 +275,10 @@ class HostAggregateController < ApplicationController
 
   private
 
+  def record_class
+    params[:pressed] && %w[vms instances images].include?(params[:display]) ? VmOrTemplate : HostAggregate
+  end
+
   def textual_group_list
     [%i[relationships], %i[tags]]
   end

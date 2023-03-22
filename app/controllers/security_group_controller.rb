@@ -219,6 +219,10 @@ class SecurityGroupController < ApplicationController
 
   private
 
+  def record_class
+    SecurityGroup
+  end
+
   def create_rule(rule)
     rule_data = @security_group.class.parse_security_group_rule(rule)
     task_id = @security_group.create_security_group_rule_queue(session[:userid], @security_group.ems_ref,

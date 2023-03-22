@@ -114,6 +114,10 @@ class CloudTenantController < ApplicationController
 
   private
 
+  def record_class
+    params[:pressed] && %w[instances images].include?(params[:display]) ? VmOrTemplate : CloudTenant
+  end
+
   def textual_group_list
     [%i[properties relationships quotas], %i[tags]]
   end

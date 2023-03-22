@@ -241,7 +241,7 @@ module ApplicationController::CiProcessing
   end
 
   def record_class
-    VmOrTemplate
+    raise NotImplementedError, "#{__method__} is not implemented in #{self.class.name}!"
   end
 
   def process_objects(objs, task, display_name = nil)

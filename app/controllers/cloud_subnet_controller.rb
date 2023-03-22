@@ -101,6 +101,10 @@ class CloudSubnetController < ApplicationController
 
   private
 
+  def record_class
+    params[:pressed].starts_with?('cloud_subnet') ? CloudSubnet : VmOrTemplate
+  end
+
   def textual_group_list
     [%i[properties relationships], %i[tags]]
   end

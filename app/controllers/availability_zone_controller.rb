@@ -27,6 +27,10 @@ class AvailabilityZoneController < ApplicationController
 
   private
 
+  def record_class
+    params[:pressed] && %w[vms instances images].include?(params[:display]) ? VmOrTemplate : AvailabilityZone
+  end
+
   def textual_group_list
     [%i[relationships], %i[availability_zone_totals tags]]
   end

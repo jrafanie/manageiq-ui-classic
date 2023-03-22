@@ -62,6 +62,10 @@ class AuthKeyPairCloudController < ApplicationController
   
   private
 
+  def record_class
+    params[:display] == 'instances' ? VmOrTemplate : ManageIQ::Providers::CloudManager::AuthKeyPair
+  end
+
   def textual_group_list
     [%i[properties relationships lifecycle], %i[tags]]
   end

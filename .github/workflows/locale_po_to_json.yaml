@@ -46,16 +46,7 @@ jobs:
       uses: peter-evans/create-pull-request@v6
       with:
         add-paths: |
-          app/javascript/oldjs/locale/de.json
-          app/javascript/oldjs/locale/en.json
-          app/javascript/oldjs/locale/es.json
-          app/javascript/oldjs/locale/fr.json
-          app/javascript/oldjs/locale/it.json
-          app/javascript/oldjs/locale/ja.json
-          app/javascript/oldjs/locale/ko.json
-          app/javascript/oldjs/locale/pt_BR.json
-          app/javascript/oldjs/locale/zh_CN.json
-          app/javascript/oldjs/locale/zh_TW.json
+          app/javascript/oldjs/locale
         commit-message: Update UI json translation files ${{github.event.repository.updated_at}}
         branch: update_ui_json_translation_files
         author: ManageIQ Bot <bot@manageiq.org>

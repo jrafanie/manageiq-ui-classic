@@ -6,7 +6,7 @@ permissions:
   contents: read
 jobs:
   locale_po_to_json:
-    if: github.repository_owner == 'ManageIQ'
+    if: github.repository_owner == 'jrafanie'
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -62,7 +62,7 @@ jobs:
         committer: ManageIQ Bot <bot@manageiq.org>
         delete-branch: true
         labels: internationalization
-        push-to-fork: ManageIQ/manageiq-ui-classic
+        push-to-fork: jrafanie/manageiq-ui-classic
         title: Update UI json translation files ${{github.event.repository.updated_at}}
         body: Update UI json translation files
         token: ${{ secrets.PR_TOKEN }}

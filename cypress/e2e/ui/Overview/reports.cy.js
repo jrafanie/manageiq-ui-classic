@@ -21,63 +21,63 @@ describe('Overview > Reports Tests', () => {
     });
 
     // Fill out report information
-    cy.get('#name').type('Cypress Test Report', { force: true });
-    cy.get('#title').type('Cypress test report title', { force: true });
+    cy.get('#name').type('Cypress Test Report');
+    cy.get('#title').type('Cypress test report title');
 
     let basedOn = '';
     let columns = [];
     let tableName = '';
 
-    cy.get(':nth-child(3) > .col-md-8 > .btn-group > .btn').click({force: true});
+    cy.get(':nth-child(3) > .col-md-8 > .btn-group > .btn').click();
     cy.get(':nth-child(3) > .col-md-8 > .btn-group > .open > .dropdown-menu > [data-original-index="1"] > a').then((option) => {
-      cy.get(option).click({ force: true });
+      cy.get(option).click();
       basedOn = option[0].innerText;
       tableName = basedOn.substring(0, basedOn.length - 1).replace(' ', '');
     });
-    cy.get('[align="left"] > .btn-group > .btn').click({ force: true });
+    cy.get('[align="left"] > .btn-group > .btn').click();
     cy.get('[align="left"] > .btn-group > .open > .dropdown-menu > [data-original-index="0"] > a > .text').then((option) => {
-      cy.get(option).click({ force: true });
+      cy.get(option).click();
       columns.push(option[0].innerText.trim());
     });
     cy.get('[align="left"] > .btn-group > .open > .dropdown-menu > [data-original-index="1"] > a > .text').then((option) => {
-      cy.get(option).click({ force: true });
+      cy.get(option).click();
       columns.push(option[0].innerText.trim());
     });
     cy.get('[align="left"] > .btn-group > .btn > .filter-option').click({ force: true});
     cy.intercept('/report/form_field_changed/new?button=right').as('fieldsChanged');
-    cy.get('[alt="Move selected fields down"]').click({force: true});
+    cy.get('[alt="Move selected fields down"]').click();
     cy.wait('@fieldsChanged').then(() => {
     // Verify all report page tabs load correctly
-      cy.get('#Consolidation_tab > a').click({ force: true });
+      cy.get('#Consolidation_tab > a').click();
       cy.get('#consolidate_div > h3').contains('Group Records by up to 3 Columns');
-      cy.get('#Formatting_tab > a').click({ force: true });
+      cy.get('#Formatting_tab > a').click();
       cy.get('#formatting_div > h3').contains('PDF Output');
-      cy.get('#Styling_tab > a').click({ force: true });
+      cy.get('#Styling_tab > a').click();
       cy.get('#styling_div > h3').contains('Specify Column Styles');
-      cy.get('#Filter_tab > a').click({ force: true });
+      cy.get('#Filter_tab > a').click();
       cy.get('#filter_div > h3').contains(`Primary (Record) Filter - Filters the ${tableName} table records`);
     });
 
     // Set chart type and make sure chart loads correctly
     let sortBy = '';
     let chartType = '';
-    cy.get('#Summary_tab > a').click({ force: true });
-    cy.get('#sort_div').get('.btn-group > .btn').click({ force: true });
+    cy.get('#Summary_tab > a').click();
+    cy.get('#sort_div').get('.btn-group > .btn').click();
     cy.get('[data-original-index="1"] > a').then((option) => {
-      cy.get(option).click({ force: true });
+      cy.get(option).click();
       sortBy = option[0].innerText;
     });
-    cy.get('#Charts_tab > a').click({ force: true });
-    cy.get('#chart_div').get('.btn-group > .btn').click({ force: true });
+    cy.get('#Charts_tab > a').click();
+    cy.get('#chart_div').get('.btn-group > .btn').click();
     cy.get('[data-original-index="1"] > a').then((option) => {
-      cy.get(option).click({ force: true });
+      cy.get(option).click();
       chartType = option[0].innerText;
     });
     cy.get('#chart_sample_div > fieldset');
 
     // Load report preview and verify column values
-    cy.get('#Preview_tab > a').click({ force: true });
-    cy.get('#form_preview > h3').get('a > .fa').click({ force: true });
+    cy.get('#Preview_tab > a').click();
+    cy.get('#form_preview > h3').get('a > .fa').click();
     cy.get('#form_preview').get('h3').contains('Chart Preview (up to 50 rows)');
     cy.get('#form_preview').get('h3').contains('Report Preview (up to 50 rows)');
     cy.get('#form_preview').get('th').then((result) => {
@@ -85,13 +85,13 @@ describe('Overview > Reports Tests', () => {
       expect(result[1].innerText).to.eq(columns[1]);
     });
 
-    cy.get('#buttons_on > .btn-primary').click({ force: true }); // Click Add button
+    cy.get('#buttons_on > .btn-primary').click(); // Click Add button
 
     // Navigate to the report that was just added
     cy.expect_show_list_title('All Reports');
     cy.get('.clickable-row').contains('My Company').click();
     cy.expect_show_list_title('My Company (All Groups) Reports');
-    cy.get('.clickable-row').contains('Custom').click({ force: true });
+    cy.get('.clickable-row').contains('Custom').click();
     cy.expect_show_list_title('Custom Reports');
     cy.get('.list-group-item').contains('Cypress Test Report').click();
 
@@ -134,48 +134,48 @@ describe('Overview > Reports Tests', () => {
         });
       });
       // Edit report information
-      cy.get('#name').clear({ force: true }).type('Cypress Test Report Edit', { force: true });
-      cy.get('#title').clear({ force: true }).type('Cypress test report title edit', { force: true });
+      cy.get('#name').clear().type('Cypress Test Report Edit');
+      cy.get('#title').clear().type('Cypress test report title edit');
 
-      cy.get('[align="left"] > .btn-group > .btn').click({ force: true });
+      cy.get('[align="left"] > .btn-group > .btn').click();
       cy.get('[align="left"] > .btn-group > .open > .dropdown-menu > [data-original-index="24"] > a').then((option) => {
-        cy.get(option).click({ force: true });
+        cy.get(option).click();
         columns.push(option[0].innerText.trim());
       });
-      cy.get('[align="left"] > .btn-group > .btn > .filter-option').click({ force: true });
+      cy.get('[align="left"] > .btn-group > .btn > .filter-option').click();
       cy.intercept(`/report/form_field_changed/${id}?button=right`).as('fieldsChanged');
-      cy.get('.text-center > [alt="Move selected fields down"]').click({force: true});
+      cy.get('.text-center > [alt="Move selected fields down"]').click();
       cy.wait('@fieldsChanged');
 
       // Verify all report page tabs load correctly
-      cy.get('#Consolidation_tab > a').click({ force: true });
+      cy.get('#Consolidation_tab > a').click();
       cy.get('#consolidate_div > h3').contains('Group Records by up to 3 Columns');
-      cy.get('#Formatting_tab > a').click({ force: true });
+      cy.get('#Formatting_tab > a').click();
       cy.get('#formatting_div > h3').contains('PDF Output');
-      cy.get('#Styling_tab > a').click({ force: true });
+      cy.get('#Styling_tab > a').click();
       cy.get('#styling_div > h3').contains('Specify Column Styles');
-      cy.get('#Filter_tab > a').click({ force: true });
+      cy.get('#Filter_tab > a').click();
       cy.get('#filter_div > h3').contains(`Primary (Record) Filter - Filters the ${tableName} table records`);
 
       // Edit report chart values and verify chart and report are correctly created
       sortBy = '';
       chartType = '';
-      cy.get('#Summary_tab > a').click({ force: true });
-      cy.get(':nth-child(2) > :nth-child(1) > .col-md-8 > .btn-group > .btn').click({ force: true });
+      cy.get('#Summary_tab > a').click();
+      cy.get(':nth-child(2) > :nth-child(1) > .col-md-8 > .btn-group > .btn').click();
       cy.get(':nth-child(1) > .col-md-8 > .btn-group > .open > .dropdown-menu > [data-original-index="3"] > a').then((option) => {
-        cy.get(option).click({ force: true });
+        cy.get(option).click();
         sortBy = option[0].innerText;
       });
-      cy.get('#Charts_tab > a').click({ force: true });
-      cy.get('#chart_div').get(':nth-child(1) > .col-md-8 > .btn-group > .btn').click({ force: true });
+      cy.get('#Charts_tab > a').click();
+      cy.get('#chart_div').get(':nth-child(1) > .col-md-8 > .btn-group > .btn').click();
       cy.get(':nth-child(1) > .col-md-8 > .btn-group > .open > .dropdown-menu > [data-original-index="3"] > a').then((option) => {
-        cy.get(option).click({ force: true });
+        cy.get(option).click();
         chartType = option[0].innerText;
       });
       cy.get('#chart_sample_div > fieldset');
 
-      cy.get('#Preview_tab > a').click({ force: true });
-      cy.get('#form_preview > h3').get('a > .fa').click({ force: true });
+      cy.get('#Preview_tab > a').click();
+      cy.get('#form_preview > h3').get('a > .fa').click();
       cy.get('#form_preview').get('h3').contains('Chart Preview (up to 50 rows)');
       cy.get('#form_preview').get('h3').contains('Report Preview (up to 50 rows)');
       cy.get('#form_preview').get('th').then((result) => {
@@ -183,7 +183,7 @@ describe('Overview > Reports Tests', () => {
         expect(result[1].innerText).to.eq(columns[1]);
         expect(result[2].innerText).to.eq(columns[2]);
       });
-      cy.get('#buttons_on > .btn-primary').click({ force: true }); // Click save button
+      cy.get('#buttons_on > .btn-primary').click(); // Click save button
     }).then(() => {
       // Verify report was edited with correct values on summary page
       tableHeaders = [];
@@ -233,7 +233,7 @@ describe('Overview > Reports Tests', () => {
   });
 
   it('Can add, edit and delete a schedule', () => {
-    cy.get('#control_schedules_accord > .panel-title > .collapsed').click({ force: true });
+    cy.get('#control_schedules_accord > .panel-title > .collapsed').click();
 
     // Click add schedule
     cy.get('#miq_schedule_vmdb_choice').click().then(() => {
@@ -242,19 +242,19 @@ describe('Overview > Reports Tests', () => {
       });
     });
     // Fill out schedule information
-    cy.get('#name').type('Cypress Test Schedule', { force: true });
-    cy.get('#description').type('Cypress test schedule description', { force: true });
+    cy.get('#name').type('Cypress Test Schedule');
+    cy.get('#description').type('Cypress test schedule description');
 
     let reportFilter = '';
-    cy.get('#form_filter_div > .form-horizontal > :nth-child(1) > .col-md-8 > .btn-group > .btn').click({ force: true });
+    cy.get('#form_filter_div > .form-horizontal > :nth-child(1) > .col-md-8 > .btn-group > .btn').click();
     cy.get('#form_filter_div > .form-horizontal > :nth-child(1) > .col-md-8 > .btn-group > .open > .dropdown-menu > [data-original-index="5"] > a').then((option) => {
-      cy.get(option).click({ force: true }).then(() => {
-        cy.get('#form_filter_div > .form-horizontal > :nth-child(2) > .col-md-8 > .btn-group > .btn').click({ force: true });
+      cy.get(option).click().then(() => {
+        cy.get('#form_filter_div > .form-horizontal > :nth-child(2) > .col-md-8 > .btn-group > .btn').click();
         cy.get('#form_filter_div > .form-horizontal > :nth-child(2) > .col-md-8 > .btn-group > .open > .dropdown-menu > [data-original-index="1"] > a').then((option) => {
-          cy.get(option).click({ force: true }).then(() => {
-            cy.get(':nth-child(3) > .col-md-8 > .btn-group > .btn').click({ force: true });
+          cy.get(option).click().then(() => {
+            cy.get(':nth-child(3) > .col-md-8 > .btn-group > .btn').click();
             cy.get(':nth-child(3) > .col-md-8 > .btn-group > .open > .dropdown-menu > [data-original-index="1"] > a').then((option) => {
-              cy.get(option).click({ force: true });
+              cy.get(option).click();
               reportFilter = option[0].innerText;
             });
           });
@@ -266,19 +266,19 @@ describe('Overview > Reports Tests', () => {
     let runTiming = '';
     let runHour = '';
     let runMinute = '';
-    cy.get('#form_timer_div > .form-horizontal > :nth-child(1) > .col-md-8 > :nth-child(1) > .btn').click({ force: true });
+    cy.get('#form_timer_div > .form-horizontal > :nth-child(1) > .col-md-8 > :nth-child(1) > .btn').click();
     cy.get('.btn-group.open > .open > .dropdown-menu > [data-original-index="2"] > a').then((option) => {
-      cy.get(option).click({ force: true });
+      cy.get(option).click();
       runTiming = option[0].innerText;
     });
-    cy.get(':nth-child(4) > .col-md-8 > :nth-child(1) > .btn').click({ force: true });
+    cy.get(':nth-child(4) > .col-md-8 > :nth-child(1) > .btn').click();
     cy.get('.btn-group.open > .open > .dropdown-menu > [data-original-index="4"] > a').then((option) => {
-      cy.get(option).click({ force: true });
+      cy.get(option).click();
       runHour = option[0].innerText;
     });
-    cy.get(':nth-child(3) > .btn').click({ force: true });
+    cy.get(':nth-child(3) > .btn').click();
     cy.get('.btn-group.open > .open > .dropdown-menu > [data-original-index="10"] > a').then((option) => {
-      cy.get(option).click({ force: true });
+      cy.get(option).click();
       runMinute = option[0].innerText;
     });
 
@@ -330,21 +330,21 @@ describe('Overview > Reports Tests', () => {
 
     // Edit the schedule information
     reportFilter = '';
-    cy.get('#name').clear({ force: true }).type('Cypress Test Schedule Edit', { force: true });
-    cy.get('#description').clear({ force: true }).type('Cypress test schedule description edit', { force: true });
+    cy.get('#name').clear().type('Cypress Test Schedule Edit');
+    cy.get('#description').clear().type('Cypress test schedule description edit');
 
-    cy.get('#form_filter_div > .form-horizontal > :nth-child(1) > .col-md-8 > .btn-group > .btn').click({ force: true });
-    cy.get('#form_filter_div > .form-horizontal > :nth-child(1) > .col-md-8 > .btn-group > .open > .dropdown-menu > [data-original-index="0"] > a').click({ force: true });
+    cy.get('#form_filter_div > .form-horizontal > :nth-child(1) > .col-md-8 > .btn-group > .btn').click();
+    cy.get('#form_filter_div > .form-horizontal > :nth-child(1) > .col-md-8 > .btn-group > .open > .dropdown-menu > [data-original-index="0"] > a').click();
 
-    cy.get('#form_filter_div > .form-horizontal > :nth-child(1) > .col-md-8 > .btn-group > .btn').click({ force: true });
+    cy.get('#form_filter_div > .form-horizontal > :nth-child(1) > .col-md-8 > .btn-group > .btn').click();
     cy.get('#form_filter_div > .form-horizontal > :nth-child(1) > .col-md-8 > .btn-group > .open > .dropdown-menu > [data-original-index="1"] > a').then((option) => {
-      cy.get(option).click({ force: true }).then(() => {
-        cy.get('#form_filter_div > .form-horizontal > :nth-child(2) > .col-md-8 > .btn-group > .btn', {timeout: 5000}).click({ force: true });
+      cy.get(option).click().then(() => {
+        cy.get('#form_filter_div > .form-horizontal > :nth-child(2) > .col-md-8 > .btn-group > .btn', {timeout: 5000}).click();
         cy.get('#form_filter_div > .form-horizontal > :nth-child(2) > .col-md-8 > .btn-group > .open > .dropdown-menu > [data-original-index="1"] > a').then((option) => {
-          cy.get(option).click({ force: true }).then(() => {
-            cy.get(':nth-child(3) > .col-md-8 > .btn-group > .btn', {timeout: 5000}).click({ force: true });
+          cy.get(option).click().then(() => {
+            cy.get(':nth-child(3) > .col-md-8 > .btn-group > .btn', {timeout: 5000}).click();
             cy.get(':nth-child(3) > .col-md-8 > .btn-group > .open > .dropdown-menu > [data-original-index="1"] > a').then((option) => {
-              cy.get(option).click({ force: true });
+              cy.get(option).click();
               reportFilter = option[0].innerText;
             });
           });
@@ -356,31 +356,31 @@ describe('Overview > Reports Tests', () => {
     runTiming = '';
     runHour = '';
     runMinute = '';
-    cy.get('#form_timer_div > .form-horizontal > :nth-child(1) > .col-md-8 > :nth-child(1) > .btn').click({ force: true });
+    cy.get('#form_timer_div > .form-horizontal > :nth-child(1) > .col-md-8 > :nth-child(1) > .btn').click();
     cy.get('.btn-group.open > .open > .dropdown-menu > [data-original-index="0"] > a').then((option) => {
-      cy.get(option).click({ force: true });
+      cy.get(option).click();
       runTiming = option[0].innerText;
     });
-    cy.get(':nth-child(4) > .col-md-8 > :nth-child(1) > .btn').click({ force: true });
+    cy.get(':nth-child(4) > .col-md-8 > :nth-child(1) > .btn').click();
     cy.get('.btn-group.open > .open > .dropdown-menu > [data-original-index="0"] > a').then((option) => {
-      cy.get(option).click({ force: true });
+      cy.get(option).click();
       runHour = option[0].innerText;
     });
-    cy.get(':nth-child(3) > .btn').click({ force: true });
+    cy.get(':nth-child(3) > .btn').click();
     cy.get('.btn-group.open > .open > .dropdown-menu > [data-original-index="6"] > a').then((option) => {
-      cy.get(option).click({ force: true });
+      cy.get(option).click();
       runMinute = option[0].innerText;
     });
 
     // Add a from and to email for the schedule
-    cy.get('#send_email_cb').click({ force: true });
-    cy.get('#from').type('cfadmin@cfserver.com', { force: true });
-    cy.get('#email').type('cfadmin@cfserver.com', { force: true });
-    cy.get('.input-group-btn > .btn').click({ force: true });
+    cy.get('#send_email_cb').click();
+    cy.get('#from').type('cfadmin@cfserver.com');
+    cy.get('#email').type('cfadmin@cfserver.com');
+    cy.get('.input-group-btn > .btn').click();
 
     // Click save button
     cy.get('#edit_to_email_div > .form-horizontal > :nth-child(1) > .col-md-8').contains('cfadmin@cfserver.com');
-    cy.get('#buttons_on > .btn-primary').click({ force: true }).then(() => {
+    cy.get('#buttons_on > .btn-primary').click().then(() => {
       // Load schedule and verify it was edited with correct values on summary page
       tableHeaders = [];
       tableValues = [];

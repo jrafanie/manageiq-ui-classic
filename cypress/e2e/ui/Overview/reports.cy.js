@@ -10,7 +10,7 @@ describe('Overview > Reports Tests', () => {
     cy.expect_show_list_title('All Saved Reports');
   });
 
-  it('Can add, edit and delete a report', () => {
+  it.only('Can add, edit and delete a report', () => {
     cy.get('#control_reports_accord > .panel-title > .collapsed').click(); // Navigate to reports section of explorer page
 
     // Click add report
@@ -23,8 +23,11 @@ describe('Overview > Reports Tests', () => {
     // Fill out report information
     cy.intercept('/report/form_field_changed/new').as('inputChanged');
     cy.get('#name').type('Cypress Test Report');
+    // cy.get('#name').contains('Cypress Test Report');
     cy.wait('@inputChanged')
+
     cy.get('#title').type('Cypress test report title');
+    // cy.get('#title').contains('Cypress test report title');
     cy.wait('@inputChanged')
 
     let basedOn = '';

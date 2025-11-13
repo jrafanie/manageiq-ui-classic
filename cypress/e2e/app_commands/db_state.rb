@@ -4,6 +4,7 @@ case option
 when "capture"
   logger.info "[Cypress] DatabaseCleaner capturing"
   DatabaseCleaner.start
+  logger.info "[Cypress] DatabaseCleaner capturing finished"
 when "restore"
   logger.info "[Cypress] DatabaseCleaner restoring"
   DatabaseCleaner.clean
@@ -14,6 +15,7 @@ when "restore"
     VCR.turn_off!
     WebMock.disable! if defined?(WebMock)
   end
+  logger.info "[Cypress] DatabaseCleaner restoring finished"
 else
   message = "Unknown db_state #{option}!"
   logger.error "[Cypress] #{message}"

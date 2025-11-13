@@ -54,4 +54,6 @@ if ENV['CYPRESS'].present?
   # end
   require 'extensions/database_cleaner-activerecord-seeded_deletion'
   DatabaseCleaner[:active_record].strategy = DatabaseCleaner::ActiveRecord::SeededDeletion.new(:pre_count => true)
+
+  Rails.application.config.middleware.insert_before 0, Rack::Lock
 end

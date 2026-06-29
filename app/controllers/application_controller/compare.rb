@@ -583,7 +583,7 @@ module ApplicationController::Compare
                      end
               if idx.positive?
                 # Mark the ones that don't match the base
-                if mode == :compare && @compare.results[@compare.ids[1]][section[:name]][level2].present? && @compare.results[@compare.ids[0]][section[:name]][level2][attr[:name]][:_value_].to_s != rval.to_s
+                if mode == :compare && @compare.results[@compare.ids[1]][section[:name]][level2].present? && @compare.results[@compare.ids[0]][section[:name]][level2]&.dig(attr[:name], :_value_).to_s != rval.to_s
                   rval = "* " + rval.to_s
                 # Mark the ones that don't match the base
                 elsif mode == :compare && @compare.results[@compare.ids[0]][section[:name]][level2].nil? && rval.to_s != "(missing)"

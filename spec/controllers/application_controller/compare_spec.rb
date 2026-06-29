@@ -70,6 +70,47 @@ describe ApplicationController do
     end
   end
 
+  describe '#prepare_data_for_compare_or_drift_report' do
+    # Regression test: NoMethodError when the base VM (ids[0]) has fewer disks than another
+    # VM being compared. The third branch of the method handles sections where records
+    # (level2 grouping keys — disk identifiers) and fields (disk attributes) are both present.
+    # When the base VM lacks a disk that another VM has, the unguarded hash lookup on the
+    # base VM's result raised: NoMethodError: undefined method `[]' for nil
+    it 'does not raise when the base VM has fewer disks than the VM being compared' do
+      section_name     = :"hardware.disks"
+      section_header   = "Disk"
+      disk_in_both     = "sda"
+      disk_only_in_vm2 = "sdb"
+      field            = {:name => :size, :header => "Size"}
+
+      # master_list sliced in groups of 3: [section, records, fields]
+      # records is a non-nil array of disk identifiers; fields is an array of disk attributes.
+      # This combination triggers the third if-block at line 574.
+      compare = double(
+        :master_list => [
+          {:name => section_name, :header => section_header},
+          [disk_in_both, disk_only_in_vm2],
+          [field]
+        ],
+        :include => {
+          section_name => {:checked => true}
+        },
+        :ids => [1, 2],
+        :results => {
+          # Base VM only has sda; VM 2 has both sda and sdb
+          1 => {section_name => {disk_in_both => {:size => {:_value_ => "10 GB", :_match_ => true}}}},
+          2 => {section_name => {disk_in_both => {:size => {:_value_ => "10 GB", :_match_ => true}},
+                                 disk_only_in_vm2 => {:size => {:_value_ => "20 GB", :_match_ => false}}}}
+        }
+      )
+
+      controller.instance_variable_set(:@compare, compare)
+      controller.instance_variable_set(:@sb, :miq_temp_params => 'all')
+
+      expect { controller.send(:prepare_data_for_compare_or_drift_report, :compare, false) }.not_to raise_error
+    end
+  end
+
   describe "download_data" do
     before do
       stub_user(:features => :all)

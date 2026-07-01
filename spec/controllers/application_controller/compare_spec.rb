@@ -92,15 +92,14 @@ describe ApplicationController do
           [disk_in_both, disk_only_in_vm2],
           [field]
         ],
-        :include => {
-          section_name => {:checked => true}
-        },
-        :ids => [1, 2],
-        :results => {
+        :include   => {section_name => {:checked => true}},
+        :ids       => [1, 2],
+        :records   => [{"id" => 1}],
+        :results   => {
           # Base VM only has sda; VM 2 has both sda and sdb
-          1 => {section_name => {disk_in_both => {:size => {:_value_ => "10 GB", :_match_ => true}}}},
+          1 => {section_name => {disk_in_both => {:size => {:_value_ => "10 GB", :_match_ => true}}, :_match_ => "100"}},
           2 => {section_name => {disk_in_both => {:size => {:_value_ => "10 GB", :_match_ => true}},
-                                 disk_only_in_vm2 => {:size => {:_value_ => "20 GB", :_match_ => false}}}}
+                                 disk_only_in_vm2 => {:size => {:_value_ => "20 GB", :_match_ => false}}, :_match_ => "50"}}
         }
       )
 
@@ -108,6 +107,54 @@ describe ApplicationController do
       controller.instance_variable_set(:@sb, :miq_temp_params => 'all')
 
       expect { controller.send(:prepare_data_for_compare_or_drift_report, :compare, false) }.not_to raise_error
+    end
+
+    # Bug: the marker condition hardcodes ids[1] as the presence gate even when iterating
+    # over ids[2], ids[3], etc. When ids[1] is missing a disk that the base and ids[2] both
+    # have but with different values, the "* " difference marker is never applied for ids[2].
+    it 'marks a differing value on ids[2] even when ids[1] is missing that disk' do
+      section_name = :"hardware.disks"
+      field        = {:name => :size, :header => "Size"}
+
+      # 3-VM compare: base=1, vm2=2, vm3=3
+      # sda exists on base and vm3 with different sizes; vm2 is missing sda entirely.
+      # _match_ is true on vm3's sda attribute so only line 586's value comparison
+      # would mark it as different — but that condition gates on ids[1].present?
+      # which is false (vm2 has no sda), so vm3's differing value is never marked.
+      compare = double(
+        :master_list => [
+          {:name => section_name, :header => "Disk"},
+          ["sda"],
+          [field]
+        ],
+        :include => {section_name => {:checked => true}},
+        :ids     => [1, 2, 3],
+        :records => [{"id" => 1}],
+        :results => {
+          1 => {section_name => {"sda" => {:size => {:_value_ => "10 GB", :_match_ => true}}, :_match_ => "100"}},
+          2 => {section_name => {                                                               :_match_ => "0"}},  # ids[1] missing sda
+          3 => {section_name => {"sda" => {:size => {:_value_ => "20 GB", :_match_ => true}},  :_match_ => "50"}}  # ids[2] differs from base; _match_ true so only line 586 can mark it
+        }
+      )
+
+      controller.instance_variable_set(:@compare, compare)
+      controller.instance_variable_set(:@sb, :miq_temp_params => 'all')
+
+      controller.send(:prepare_data_for_compare_or_drift_report, :compare, false)
+      data = controller.instance_variable_get(:@data)
+
+      # @data contains multiple rows per section:
+      #   row[0]: Found/Missing existence row  ["Disk", "sda", "", base, vm2, vm3]
+      #   row[1]: attribute value row          ["Disk", "sda", "Size", base_val, vm2_val, vm3_val]
+      #   row[2]: % match summary row
+      # vm3 (index 5 in row[1]) has a different size than base so should be marked "* "
+      attr_row = data[1]
+      expect(attr_row).to(
+        satisfy { |row| row[5].to_s.start_with?("* ") },
+        "expected vm3's size (col 5) to be marked as different with '* ' prefix, got: #{attr_row[5].inspect}\n" \
+        "all rows [section, disk, attr, base, vm2, vm3]:\n" +
+        data.map.with_index { |row, i| "  [#{i}] #{row.inspect}" }.join("\n")
+      )
     end
   end
 
